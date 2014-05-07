@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Main activity for Tethering Widget application.
+ */
 public class MainActivity extends Activity implements View.OnClickListener {
     public static final String PREF_SSID_NAME = "ssid_name";
     public static final String DEFAULT_SSID_NAME = "AndroidAP";
@@ -54,17 +57,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    /** Returns SSID name stored in shared preference. */
     public String getSSIDName() {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         return sharedPreferences.getString(PREF_SSID_NAME, DEFAULT_SSID_NAME);
     }
 
+    /**
+     * Stores SSID name into SharedPreference.
+     *
+     * @param ssidName Name of network SSID.
+     */
     private void setSSIDName(String ssidName) {
+        // If user enters empty SSID name, ask to provide SSID name using Toast message.
         if (ssidName.isEmpty()) {
-            Toast.makeText(this.getApplicationContext(), R.string.provide_ssid, Toast.LENGTH_LONG);
+            Toast.makeText(this.getApplicationContext(), R.string.provide_ssid,
+                    Toast.LENGTH_LONG).show();
             return;
         }
+
+        // Stored the SSID preference to SharedPreference, so that we can load it next time.
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         sharedPreferences.edit().putString(PREF_SSID_NAME, ssidName).apply();
