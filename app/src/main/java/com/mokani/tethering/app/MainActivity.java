@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// Some comment
 public class MainActivity extends Activity implements View.OnClickListener {
     public static final String PREF_SSID_NAME = "ssid_name";
     public static final String DEFAULT_SSID_NAME = "AndroidAP";
