@@ -59,4 +59,3 @@ public class TetheringAppWidgetProvider extends AppWidgetProvider {
         manager.updateAppWidget(myWidget, remoteViews);
     }
 }
-
