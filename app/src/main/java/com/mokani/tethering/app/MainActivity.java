@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,9 +16,12 @@ import android.widget.Toast;
  */
 public class MainActivity extends Activity implements View.OnClickListener {
     public static final String PREF_SSID_NAME = "ssid_name";
+    public static final String PREF_PASSWORD = "password";
     public static final String DEFAULT_SSID_NAME = "AndroidAP";
+    private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
     TextView ssidText;
+    TextView passwordText;
     Button saveButton;
     Button cancelButton;
 
@@ -26,6 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.main);
 
         ssidText = (TextView) findViewById(R.id.ssidText);
+        passwordText = (TextView) findViewById(R.id.passwordText);
         saveButton = (Button) findViewById(R.id.saveButton);
         cancelButton = (Button) findViewById(R.id.cancelButton);
     }
@@ -33,27 +39,62 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
+
+        // Put initial value in text boxes.
         ssidText.setText(getSSIDName());
+        final String password = getPassword();
+        passwordText.setText(password);
+        if (password.length() < MINIMUM_PASSWORD_LENGTH) {
+            saveButton.setEnabled(false);
+        }
+
+        // Set required listeners on widgets.
         saveButton.setOnClickListener(this);
         cancelButton.setOnClickListener(this);
         ssidText.setOnClickListener(this);
+        passwordText.setOnClickListener(this);
+
+        passwordText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                // N/A
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                // N/A
+            }
+
+            /**
+             * If password length is not sufficient, disable save button.
+             * Enable save button, if password length is sufficient.
+             */
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() < MINIMUM_PASSWORD_LENGTH) {
+                    saveButton.setEnabled(false);
+                } else {
+                    saveButton.setEnabled(true);
+                }
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.saveButton) {
-            ssidText = (TextView) findViewById(R.id.ssidText);
             setSSIDName(ssidText.getText().toString());
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
+            setPassword(passwordText.getText().toString());
+            Toast.makeText(
+                    this.getApplicationContext(), "Information Saved", Toast.LENGTH_SHORT).show();
         } else if (view.getId() == R.id.cancelButton) {
-            ssidText = (TextView) findViewById(R.id.ssidText);
             ssidText.setText(getSSIDName());
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-        } else if (view.getId() == R.id.ssidText) {
-            saveButton.setEnabled(true);
-            cancelButton.setEnabled(true);
+            passwordText.setText(getPassword());
+            if (passwordText.getText().toString().length() < MINIMUM_PASSWORD_LENGTH) {
+                saveButton.setEnabled(false);
+            } else {
+                saveButton.setEnabled(true);
+            }
         }
     }
 
@@ -81,5 +122,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         sharedPreferences.edit().putString(PREF_SSID_NAME, ssidName).apply();
+    }
+
+    /** Returns password stored in shared preference. */
+    private String getPassword() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        return sharedPreferences.getString(PREF_PASSWORD, "");
+    }
+
+    /** Set password in SharedPreference. */
+    private void setPassword(String password) {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        sharedPreferences.edit().putString(PREF_PASSWORD, password).apply();
     }
 }
