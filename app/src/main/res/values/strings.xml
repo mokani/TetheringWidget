@@ -3,4 +3,8 @@
     <string name="app_name">Tethering</string>
     <string name="action_settings">Settings</string>
     <string name="provide_ssid">Please provide netword SSID name</string>
+    <string-array name="security_type_array">
+        <item>None</item>
+        <item>WPA PSK</item>
+    </string-array>
 </resources>

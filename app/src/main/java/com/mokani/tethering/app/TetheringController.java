@@ -46,16 +46,18 @@ public class TetheringController extends BroadcastReceiver {
             if (method.getName().equals("setWifiApEnabled")) {
                 WifiConfiguration netConfig = new WifiConfiguration();
                 netConfig.SSID = getSSIDName(context);
-                netConfig.preSharedKey  = getPassword(context);
-                // TODO (mokani,csunil): Give UI option to create hidden SSID.
-                netConfig.hiddenSSID = false;
-                netConfig.status = WifiConfiguration.Status.ENABLED;
-                netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-                netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-                netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-                netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-                netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-                netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                if (!getSecurityType(context).equals(MainActivity.SECURITY_NONE)) {
+                    netConfig.preSharedKey = getPassword(context);
+                    // TODO (mokani,csunil): Give UI option to create hidden SSID.
+                    netConfig.hiddenSSID = false;
+                    netConfig.status = WifiConfiguration.Status.ENABLED;
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+                    netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+                    netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+                    netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+                    netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+                    netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                }
                 Log.i(TAG, "SSID Name : " + netConfig.SSID);
                 try {
                     if (enable) {
@@ -77,6 +79,13 @@ public class TetheringController extends BroadcastReceiver {
                 TetheringAppWidgetProvider.buildButtonPendingIntent(context, action));
 
         TetheringAppWidgetProvider.pushWidgetUpdate(context.getApplicationContext(), remoteViews);
+    }
+
+    private String getSecurityType(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(
+                MainActivity.PREF_SECURITY_TYPE, MainActivity.SECURITY_NONE);
     }
 
     private String getSSIDName(Context context) {
