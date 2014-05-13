@@ -134,6 +134,8 @@ public class MainActivity extends Activity
             passwordText.setText(getPassword());
             securityTypeSpinner.setSelection(securityTypeAdapter.getPosition(getSecurityType()));
             enableOrDisableSaveButton(passwordText.toString().length(), getSecurityType());
+            Toast.makeText(this.getApplicationContext(), "Information Reverted",
+                    Toast.LENGTH_SHORT).show();
         } else if (view.getId() == R.id.showPasswordCheck) {
             setPasswordTextTransformationMethod();
         }
