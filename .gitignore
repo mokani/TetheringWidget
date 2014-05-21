@@ -2,3 +2,5 @@ local.properties
 gradlew
 gradlew.bat
 TetheringWidget.iml
+gradle.properties
+/gradle
